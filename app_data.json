@@ -1,0 +1,22 @@
+[
+  {
+    "id": "01",
+    "name": "সামবেদ সঙ্গীত",
+    "tagline": "বৈদিক সুরের এক অপূর্ব মূর্ছনা",
+    "image": "https://raw.githubusercontent.com/nabendudebnathbharatiya-bot/My-app-assets2/main/Ved/Vedbibhajon/images%20(7).jpeg",
+    "link": "common/ad_bridge.html?target=https://nabendudebnathbharatiya-bot.github.io/Sambed-sangeet-app/",
+    "category": "বেদ",
+    "sub_category": "সামবেদ",
+    "tags": ["বেদ", "সঙ্গীত", "আধ্যাত্মিক"]
+  },
+  {
+    "id": "02",
+    "name": "বেদের বিভাজন",
+    "tagline": "প্রাচীন জ্ঞানের মহান ভাণ্ডার",
+    "image": "https://raw.githubusercontent.com/nabendudebnathbharatiya-bot/My-app-assets2/main/Ved/Vedbibhajon/Gemini_Generated_Image_mdajj4mdajj4mdaj%20(1).png",
+    "link": "common/ad_bridge.html?target=https://nabendudebnathbharatiya-bot.github.io/Beder-bibhajon-app/",
+    "category": "বেদ",
+    "sub_category": "বেদ সমগ্র",
+    "tags": ["বেদ", "চিকিৎসা", "আধ্যাত্মিক"]
+  }
+]
