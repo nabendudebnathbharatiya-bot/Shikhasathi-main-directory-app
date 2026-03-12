@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অপেক্ষা করুন | Ad Bridge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: sans-serif; background: #000; color: white; margin: 0; overflow: hidden; }
+        .ad-viewport { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+        .ad-img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease-in-out; }
+        .controls { position: fixed; top: 20px; right: 20px; z-index: 100; text-align: right; }
+        .btn { background: #fbbf24; color: #000; font-weight: bold; padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; transition: 0.3s; }
+        .btn:hover { background: #f59e0b; }
+        .timer { background: rgba(0,0,0,0.8); padding: 10px; border: 1px solid #fbbf24; border-radius: 8px; display: none; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="../music.mp3" loop></audio>
+
+    <div class="ad-viewport">
+        <a id="ad-link" href="#" target="_blank">
+            <img id="ad-img" src="" class="ad-img" alt="Advertisement">
+        </a>
+    </div>
+
+    <div class="controls">
+        <button id="skip-btn" onclick="startTimer()" class="btn">SKIP AD & CONTINUE</button>
+        <div id="timer-box" class="timer">অপেক্ষা করুন: <span id="sec">30</span>s</div>
+    </div>
+
+    <script>
+        let ads = [];
+        let currentAdIndex = 0; // সিরিয়াল মেইনটেইন করার জন্য
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUrl = urlParams.get('target');
+
+        async function loadAds() {
+            try {
+                const cacheBuster = new Date().getTime();
+                const res = await fetch('../ad_data.json?v=' + cacheBuster);
+                
+                if (!res.ok) throw new Error("Ad file missing or syntax error");
+                
+                ads = await res.json();
+                
+                if(ads.length > 0) {
+                    // ১. প্রি-লোডিং (Preloading): ব্যাকগ্রাউন্ডে ছবিগুলো আগে থেকেই ডাউনলোড করে রাখা
+                    ads.forEach(ad => {
+                        const preloadedImg = new Image();
+                        preloadedImg.src = ad.img;
+                    });
+
+                    showAd();
+                    setInterval(showAd, 5000); // ৫ সেকেন্ড পর পর চেঞ্জ হবে
+                }
+            } catch (e) { 
+                console.error("Ads failed to load:", e); 
+            }
+        }
+
+        function showAd() {
+            if (ads.length === 0) return;
+            
+            // ২. র‍্যান্ডমের বদলে সিরিয়াল অনুযায়ী অ্যাড দেখানো
+            const ad = ads[currentAdIndex];
+            const img = document.getElementById('ad-img');
+            
+            // স্মুথ ট্রানজিশনের জন্য একটু অপাসিটি কমিয়ে আবার বাড়ানো
+            img.style.opacity = 0.5;
+            
+            setTimeout(() => {
+                img.src = ad.img;
+                document.getElementById('ad-link').href = ad.link;
+                img.style.opacity = 1;
+            }, 150); // ছবি চেঞ্জ হওয়ার সময় সামান্য গ্যাপ
+
+            // ইনডেক্স বাড়ানো (যাতে পরের বার পরের অ্যাড আসে)
+            currentAdIndex = (currentAdIndex + 1) % ads.length;
+        }
+
+        function startTimer() {
+            const audio = document.getElementById('bg-music');
+            if(audio) {
+                audio.play().catch(e => console.log("Audio play prevented."));
+            }
+
+            document.getElementById('skip-btn').style.display = 'none';
+            document.getElementById('timer-box').style.display = 'block';
+            
+            let count = 30;
+            const interval = setInterval(() => {
+                count--;
+                document.getElementById('sec').innerText = count;
+                if(count <= 0) {
+                    clearInterval(interval);
+                    window.location.href = targetUrl ? targetUrl : '../index.html';
+                }
+            }, 1000);
+        }
+
+        window.onload = loadAds;
+    </script>
+</body>
+</html>
