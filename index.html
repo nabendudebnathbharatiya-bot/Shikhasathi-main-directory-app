@@ -251,36 +251,30 @@
         }
 
         function initAdRotate() {
-    const img = document.getElementById('top-ad-img');
-    const link = document.getElementById('top-ad-link');
-    const adBox = document.getElementById('top-ad-box');
-    
-    if (allAds.length === 0) return;
-    adBox.classList.remove('hidden');
-    
-    // প্রথম অ্যাড লোড
-    img.src = allAds[adIdx].img; 
-    link.href = allAds[adIdx].link;
-    img.style.transition = "opacity 0.3s ease-in-out";
-
-    // ৩০০০ মিলি-সেকেন্ড = ৩ সেকেন্ড
-    setInterval(() => { 
-        adIdx = (adIdx + 1) % allAds.length; 
-        
-        // ফেইড আউট (ছবি হালকা হওয়া)
-        img.style.opacity = 0.3;
-        
-        setTimeout(() => {
-            // ক্যাশে আটকা পড়া রোধ করতে টাইমস্ট্যাম্প যোগ
-            const cacheBuster = new Date().getTime();
-            img.src = allAds[adIdx].img + "?v=" + cacheBuster; 
+            const img = document.getElementById('top-ad-img');
+            const link = document.getElementById('top-ad-link');
+            document.getElementById('top-ad-box').classList.remove('hidden');
             
-            link.href = allAds[adIdx].link; 
-            img.style.opacity = 1; // ফেইড ইন
-        }, 300); 
+            // প্রথম অ্যাডটি সাথে সাথে দেখানোর জন্য
+            img.src = allAds[adIdx].img; 
+            link.href = allAds[adIdx].link;
+            
+            // স্মুথ ট্রানজিশনের জন্য CSS যোগ করা হলো
+            img.style.transition = "opacity 0.3s ease-in-out";
 
-    }, 3000); 
-}
+            setInterval(() => { 
+                adIdx = (adIdx + 1) % allAds.length; 
+                
+                // ফেইড ইফেক্ট
+                img.style.opacity = 0.4;
+                setTimeout(() => {
+                    img.src = allAds[adIdx].img; 
+                    link.href = allAds[adIdx].link; 
+                    img.style.opacity = 1;
+                }, 300);
+
+            }, 5000);
+        }
 
         function toggleExplore() { 
             const menu = document.getElementById('explore-menu');
