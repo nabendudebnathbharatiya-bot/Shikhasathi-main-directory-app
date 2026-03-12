@@ -1,0 +1,39 @@
+/* গ্লোবাল সেটিংস */
+body { 
+    font-family: 'Hind Siliguri', sans-serif; 
+    transition: background 0.3s ease; 
+}
+
+/* ১. হেডার ও নেভিগেশন - সব সময় ডার্ক থাকবে (ফিক্সড) */
+.fixed-header, .fixed-nav {
+    background-color: #020617 !important; /* পিওর ব্ল্যাক/ডার্ক ব্লু */
+    border-color: #1e293b !important;
+    height: 55px;
+    z-index: 1000;
+}
+
+#main-title { color: #fbbf24 !important; font-weight: 900; } /* টাইটেল সব সময় গোল্ডেন */
+.nav-item { color: #94a3b8 !important; } /* নেভ আইকন সব সময় গ্রে/সাদা */
+
+/* ২. মোড অনুযায়ী বডি এবং কার্ডের রঙ */
+/* লাইট মোডে (সাদা স্ক্রিন) সব লেখা কালো */
+.light body { background-color: #ffffff; color: #000000 !important; }
+.light .glass-card { background: #f1f5f9; border: 1px solid #e2e8f0; color: #000000 !important; }
+.light .text-view { color: #000000 !important; }
+
+/* ডার্ক মোডে (কালো স্ক্রিন) সব লেখা সাদা */
+.dark body { background-color: #020617; color: #ffffff !important; }
+.dark .glass-card { background: #0f172a; border: 1px solid #1e293b; color: #ffffff !important; }
+.dark .text-view { color: #ffffff !important; }
+
+/* ৩. আইডি ও ট্যাগ (সব সময় উজ্জ্বল) */
+.id-pill { font-size: 16px !important; font-weight: 900; background: #fbbf24; color: #000 !important; padding: 4px 12px; border-radius: 10px; }
+.tag-custom { font-size: 14px !important; font-weight: 800; background: #1e293b; color: #fbbf24 !important; padding: 6px 15px; border-radius: 12px; border: 1px solid #fbbf2433; }
+
+/* ৪. এক্সপ্লোর স্ক্রল লজিক */
+#cat-grid { max-height: 60vh; overflow-y: auto; padding-bottom: 20px; }
+#cat-grid::-webkit-scrollbar { width: 4px; }
+#cat-grid::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 10px; }
+
+/* রুট ম্যাপ বাটন */
+.root-map-btn { position: fixed; right: 20px; bottom: 80px; width: 50px; height: 50px; background: #fbbf24 !important; color: #000 !important; border-radius: 15px; display: flex; align-items: center; justify-content: center; z-index: 90; }
