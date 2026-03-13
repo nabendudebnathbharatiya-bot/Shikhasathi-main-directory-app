@@ -3,90 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>অপেক্ষা করুন | Ad Bridge</title>
+    <title>অপেক্ষা করুন | হেসে হেসে কোডিং শেখা</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #1a1a1a; color: white; margin: 0; overflow: hidden; }
-        .ad-viewport { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #333, #000); }
-        .ad-img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; }
-        .controls { position: fixed; top: 20px; right: 20px; z-index: 100; }
-        .btn { background: #fbbf24; color: #000; font-weight: bold; padding: 12px 24px; border-radius: 12px; cursor: pointer; border: none; }
-        .timer { background: rgba(0,0,0,0.9); padding: 12px 20px; border: 2px solid #fbbf24; border-radius: 12px; display: none; margin-top: 10px; color: #fbbf24; font-size: 1.2rem; font-weight: bold; }
-        #error-msg { position: absolute; color: #555; font-size: 0.9rem; }
+        body { font-family: sans-serif; background: #000; color: white; margin: 0; overflow: hidden; }
+        .ad-viewport { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #111; }
+        #ad-img { width: 100%; height: 100%; object-fit: cover; display: none; opacity: 1; transition: opacity 0.4s ease; }
+        .controls { position: fixed; top: 20px; right: 20px; z-index: 100; text-align: right; }
+        .btn { background: #fbbf24; color: #000; font-weight: bold; padding: 12px 24px; border-radius: 12px; cursor: pointer; border: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
+        .btn:hover { background: #f59e0b; transform: scale(1.05); }
+        .timer { background: rgba(0,0,0,0.9); padding: 12px 20px; border: 2px solid #fbbf24; border-radius: 12px; display: none; margin-top: 10px; font-weight: bold; color: #fbbf24; font-size: 1.2rem; }
+        .loading-text { color: #555; position: absolute; font-weight: bold; animate-pulse; }
     </style>
 </head>
 <body>
 
-    <audio id="bg-music" src="music.mp3" loop></audio>
+    <audio id="bg-music" src="./music.mp3" loop></audio>
 
     <div class="ad-viewport">
-        <div id="error-msg">বিজ্ঞাপন লোড হচ্ছে...</div>
+        <div id="loader" class="loading-text animate-pulse text-xl">বিজ্ঞাপন লোড হচ্ছে...</div>
         <a id="ad-link" href="#" target="_blank">
-            <img id="ad-img" src="" class="ad-img" alt="">
+            <img id="ad-img" src="" alt="Advertisement">
         </a>
     </div>
 
     <div class="controls">
-        <button id="skip-btn" onclick="startTimer()" class="btn">CONTINUE TO TARGET</button>
-        <div id="timer-box" class="timer">REDIRECTING IN: <span id="sec">15</span>s</div>
+        <button id="skip-btn" onclick="startTimer()" class="btn">CONTINUE TO TARGET <i class="fa-solid fa-arrow-right ml-2"></i></button>
+        <div id="timer-box" class="timer tracking-widest">REDIRECTING IN: <span id="sec">15</span>s</div>
     </div>
 
     <script>
         let ads = [];
+        let currentIdx = 0; // সিরিয়াল বজায় রাখার কাউন্টার
         let isStarted = false;
         const urlParams = new URLSearchParams(window.location.search);
         const targetUrl = urlParams.get('target');
 
+        // বিজ্ঞাপন লোড করার ফাংশন
         async function loadAds() {
-            // তিনটি ভিন্ন পাথে খোঁজা হবে যাতে কোনোভাবেই মিস না হয়
-            const paths = ['./ad_data.json', 'ad_data.json', '../ad_data.json'];
-            
-            for (let path of paths) {
-                try {
-                    const res = await fetch(path + '?v=' + new Date().getTime());
-                    if (res.ok) {
-                        ads = await res.json();
-                        if (ads.length > 0) {
-                            displayAd(0);
-                            setInterval(() => {
-                                const idx = Math.floor(Math.random() * ads.length);
-                                displayAd(idx);
-                            }, 3000);
-                            return; // ফাইল পাওয়া গেলে লুপ বন্ধ
-                        }
-                    }
-                } catch (e) { console.log("Path failed: " + path); }
+            try {
+                // ক্যাশ বাস্টারসহ ad_data.json ফেচ করা
+                const res = await fetch('./ad_data.json?v=' + new Date().getTime());
+                if (!res.ok) throw new Error("JSON not found");
+                
+                ads = await res.json();
+                
+                if(ads.length > 0) {
+                    // প্রথম বিজ্ঞাপনটি সরাসরি দেখানো
+                    updateAd(0);
+                    
+                    // ৩ সেকেন্ড পরপর সিরিয়াল অনুযায়ী অ্যাড পরিবর্তন
+                    setInterval(() => {
+                        currentIdx = (currentIdx + 1) % ads.length;
+                        updateAd(currentIdx);
+                    }, 3000); 
+                }
+            } catch (e) { 
+                console.error("Ads fail:", e);
+                document.getElementById('loader').innerText = "অপেক্ষা করুন...";
             }
         }
 
-        function displayAd(index) {
+        // ছবি পরিবর্তন ও কালো স্ক্রিন ফিক্স লজিক
+        function updateAd(index) {
             const img = document.getElementById('ad-img');
-            img.style.opacity = 0;
-            setTimeout(() => {
-                img.src = ads[index].img;
-                document.getElementById('ad-link').href = ads[index].link;
-                img.style.opacity = 1;
-                document.getElementById('error-msg').style.display = 'none';
-            }, 300);
+            const link = document.getElementById('ad-link');
+            const loader = document.getElementById('loader');
+
+            const tempImg = new Image();
+            tempImg.src = ads[index].img;
+            
+            tempImg.onload = () => {
+                img.style.opacity = 0.4;
+                setTimeout(() => {
+                    img.src = ads[index].img;
+                    link.href = ads[index].link;
+                    img.style.display = 'block';
+                    img.style.opacity = 1;
+                    if(loader) loader.style.display = 'none';
+                }, 200);
+            };
         }
 
+        // ১৫ সেকেন্ড টাইমার লজিক
         function startTimer() {
             if(isStarted) return;
             isStarted = true;
-            
+
             const audio = document.getElementById('bg-music');
             if(audio) audio.play().catch(() => {});
 
             document.getElementById('skip-btn').style.display = 'none';
             document.getElementById('timer-box').style.display = 'block';
             
-            let count = 15;
+            let count = 15; // ফিক্সড ১৫ সেকেন্ড
             const interval = setInterval(() => {
                 count--;
                 document.getElementById('sec').innerText = count;
                 if(count <= 0) {
                     clearInterval(interval);
-                    window.location.href = targetUrl || 'index.html';
+                    // টার্গেট লিঙ্কে রিডাইরেক্ট
+                    window.location.href = targetUrl ? decodeURIComponent(targetUrl) : './index.html';
                 }
             }, 1000);
         }
