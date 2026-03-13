@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অপেক্ষা করুন | Ad Bridge</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: sans-serif; background: #1a1a1a; color: white; margin: 0; overflow: hidden; }
+        .ad-viewport { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, #333, #000); }
+        .ad-img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; }
+        .controls { position: fixed; top: 20px; right: 20px; z-index: 100; }
+        .btn { background: #fbbf24; color: #000; font-weight: bold; padding: 12px 24px; border-radius: 12px; cursor: pointer; border: none; }
+        .timer { background: rgba(0,0,0,0.9); padding: 12px 20px; border: 2px solid #fbbf24; border-radius: 12px; display: none; margin-top: 10px; color: #fbbf24; font-size: 1.2rem; font-weight: bold; }
+        #error-msg { position: absolute; color: #555; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="music.mp3" loop></audio>
+
+    <div class="ad-viewport">
+        <div id="error-msg">বিজ্ঞাপন লোড হচ্ছে...</div>
+        <a id="ad-link" href="#" target="_blank">
+            <img id="ad-img" src="" class="ad-img" alt="">
+        </a>
+    </div>
+
+    <div class="controls">
+        <button id="skip-btn" onclick="startTimer()" class="btn">CONTINUE TO TARGET</button>
+        <div id="timer-box" class="timer">REDIRECTING IN: <span id="sec">15</span>s</div>
+    </div>
+
+    <script>
+        let ads = [];
+        let isStarted = false;
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetUrl = urlParams.get('target');
+
+        async function loadAds() {
+            // তিনটি ভিন্ন পাথে খোঁজা হবে যাতে কোনোভাবেই মিস না হয়
+            const paths = ['./ad_data.json', 'ad_data.json', '../ad_data.json'];
+            
+            for (let path of paths) {
+                try {
+                    const res = await fetch(path + '?v=' + new Date().getTime());
+                    if (res.ok) {
+                        ads = await res.json();
+                        if (ads.length > 0) {
+                            displayAd(0);
+                            setInterval(() => {
+                                const idx = Math.floor(Math.random() * ads.length);
+                                displayAd(idx);
+                            }, 3000);
+                            return; // ফাইল পাওয়া গেলে লুপ বন্ধ
+                        }
+                    }
+                } catch (e) { console.log("Path failed: " + path); }
+            }
+        }
+
+        function displayAd(index) {
+            const img = document.getElementById('ad-img');
+            img.style.opacity = 0;
+            setTimeout(() => {
+                img.src = ads[index].img;
+                document.getElementById('ad-link').href = ads[index].link;
+                img.style.opacity = 1;
+                document.getElementById('error-msg').style.display = 'none';
+            }, 300);
+        }
+
+        function startTimer() {
+            if(isStarted) return;
+            isStarted = true;
+            
+            const audio = document.getElementById('bg-music');
+            if(audio) audio.play().catch(() => {});
+
+            document.getElementById('skip-btn').style.display = 'none';
+            document.getElementById('timer-box').style.display = 'block';
+            
+            let count = 15;
+            const interval = setInterval(() => {
+                count--;
+                document.getElementById('sec').innerText = count;
+                if(count <= 0) {
+                    clearInterval(interval);
+                    window.location.href = targetUrl || 'index.html';
+                }
+            }, 1000);
+        }
+
+        window.onload = loadAds;
+    </script>
+</body>
+</html>
