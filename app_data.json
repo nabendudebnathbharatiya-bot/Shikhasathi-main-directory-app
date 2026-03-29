@@ -1,22 +1,22 @@
 [
   {
     "id": "01",
-    "name": "horor",
-    "tagline": "ভয়ের আগে মূর্ছা...",
-    "image": "https://raw.githubusercontent.com/nabendudebnathbharatiya-bot/My-app-assets2/main/Ved/Vedbibhajon/images%20(7).jpeg",
-    "link": "https://nabendudebnathbharatiya-bot.github.io/horor/",
-    "category": "বেদ",
-    "sub_category": "সামবেদ",
-    "tags": ["বেদ", "সঙ্গীত", "আধ্যাত্মিক"]
+    "name": "SMART CHAKRA STUDIO",
+    "tagline": "নিজের সৃষ্টিকে আরো বিরাট করতে...",
+    "image": "https://raw.githubusercontent.com/nabendudebnathbharatiya-bot/My-app-assets2/main/assets/art/creative-art-tools-silhouette-pot-600nw-2712912921.jpg",
+    "link": "https://nabendudebnathbharatiya-bot.github.io/chakradham-smart-tool/",
+    "category": "smart tool app",
+    "sub_category": "10 ক্রিয়েটিভ টুল",
+    "tags": ["বর্ণ সংহিতা", "কোড এডিটর", "বিজ্ঞাপন পেজ ও ছবি তৈরি","দশ অবতার টুল","কনসেপ্ট বিল্ডার","প্রশ্ন অমূল্য","কমিকস মেকার","চারমুর্তি পেজ এডিটর"]
   },
   {
     "id": "02",
-    "name": "বেদের বিভাজন",
-    "tagline": "প্রাচীন জ্ঞানের মহান ভাণ্ডার",
-    "image": "https://raw.githubusercontent.com/nabendudebnathbharatiya-bot/My-app-assets2/main/Ved/Vedbibhajon/Gemini_Generated_Image_mdajj4mdajj4mdaj%20(1).png",
+    "name": "প্রো চক্র ai রোবট",
+    "tagline": "আপনার জ্ঞানের ও পথের দিশারী",
+    "image": "https://raw.githubusercontent.com/nabendudebnathbharatiya-bot/My-app-assets2/main/assets/chatbot/graident-ai-robot-vectorart_78370-4114.jpg",
     "link": "https://nabendudebnathbharatiya-bot.github.io/Beder-bibhajon-app/?v=2",
-    "category": "বেদ",
-    "sub_category": "বেদ সমগ্র",
-    "tags": ["বেদ", "চিকিৎসা", "আধ্যাত্মিক"]
+    "category": "chatbot",
+    "sub_category": "চক্র chatbot",
+    "tags": ["chatbot", "ai", "robot"]
   }
 ]
